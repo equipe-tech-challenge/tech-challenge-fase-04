@@ -3,3 +3,4 @@ deepface
 numpy
 tqdm
 face_recognition
+mediapipe
