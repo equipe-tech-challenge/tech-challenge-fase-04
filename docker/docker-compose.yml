@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: whai_redis
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    container_name: whai_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../:/app
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=sqlite:////app/storage/app.db
+      - STORAGE_ROOT=/app/storage
+    depends_on:
+      - redis
+
+  worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.worker
+    container_name: whai_worker
+    volumes:
+      - ../:/app
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=sqlite:////app/storage/app.db
+      - STORAGE_ROOT=/app/storage
+    depends_on:
+      - redis

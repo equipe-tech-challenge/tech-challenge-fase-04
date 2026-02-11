@@ -1,0 +1,10 @@
+path: /app/ai/video/yolo_bleeding/data/dataset
+
+train: images/train
+val: images/val
+
+nc: 3
+names:
+  0: gauze_soaked
+  1: gauze_stained
+  2: gauze_clean
