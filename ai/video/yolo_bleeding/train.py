@@ -25,7 +25,6 @@ def main():
         verbose=True,
     )
 
-    # Copiar best.pt para o caminho padrão do projeto
     best_path = Path("runs/bleeding/train/weights/best.pt")
     target_path = Path("ai/video/yolo_bleeding/model.pt")
 

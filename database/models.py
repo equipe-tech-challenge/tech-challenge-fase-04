@@ -7,8 +7,8 @@ class Job(Base):
     __tablename__ = "jobs"
 
     id = Column(String, primary_key=True, index=True)
-    job_type = Column(String, nullable=False)  # video | audio
-    status = Column(String, nullable=False)    # queued | processing | done | error
+    job_type = Column(String, nullable=False)
+    status = Column(String, nullable=False)
 
     input_path = Column(String, nullable=False)
 

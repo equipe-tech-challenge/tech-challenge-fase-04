@@ -10,11 +10,11 @@ from sqlalchemy.orm import Session
 from database.db import SessionLocal
 from database.models import Job
 
-from api.schemas.job import JobCreateResponse, JobStatusResponse
+from api.schemas.job import JobCreateResponse, JobStatusResponse, JobTypeVideo
 from api.services.storage_service import get_uploads_dir
 from api.services.job_service import get_job, job_to_response
 
-from workers.tasks.process_job import process_job
+from workers.tasks.process_job import process_job 
 
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
 
@@ -27,8 +27,8 @@ def get_db():
         db.close()
 
 
-@router.post("/video", response_model=JobCreateResponse)
-async def create_video_job(file: UploadFile = File(...)):
+@router.post("/video", response_model=JobCreateResponse, summary="Create Video Job for consultation, surgery or physiotherapy analysis.")
+async def create_video_job(job_request: JobTypeVideo, file: UploadFile = File(...)):
     if not file.filename:
         raise HTTPException(status_code=400, detail="Arquivo inválido.")
 
@@ -55,12 +55,12 @@ async def create_video_job(file: UploadFile = File(...)):
     finally:
         db.close()
 
-    process_job.delay(job_id)
+    process_job.delay(job_id, job_request)
 
     return JobCreateResponse(job_id=job_id, status="queued")
 
 
-@router.post("/audio", response_model=JobCreateResponse)
+@router.post("/audio", response_model=JobCreateResponse, summary="Create Audio Job to assess hesitation, anxiety and trauma. (Needs to be in .wav)")
 async def create_audio_job(file: UploadFile = File(...)):
     if not file.filename:
         raise HTTPException(status_code=400, detail="Arquivo inválido.")
@@ -93,7 +93,7 @@ async def create_audio_job(file: UploadFile = File(...)):
     return JobCreateResponse(job_id=job_id, status="queued")
 
 
-@router.get("/{job_id}", response_model=JobStatusResponse)
+@router.get("/{job_id}", response_model=JobStatusResponse, summary="Get the status and results of a job by its ID.")
 def get_job_status(job_id: str):
     db: Session = SessionLocal()
     try:
@@ -107,7 +107,7 @@ def get_job_status(job_id: str):
         db.close()
 
 
-@router.get("/{job_id}/report")
+@router.get("/{job_id}/report", summary="Download the PDF report for a job.")
 def download_report(job_id: str):
     db: Session = SessionLocal()
     try:
@@ -121,7 +121,7 @@ def download_report(job_id: str):
         return FileResponse(
             job.report_path,
             media_type="application/pdf",
-            filename=f"report_{job_id}.pdf"
+            filename=f"Report_WomenHealth_{job.id}.pdf"
         )
     finally:
         db.close()

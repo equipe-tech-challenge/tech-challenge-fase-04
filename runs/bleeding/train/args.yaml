@@ -13,7 +13,7 @@ cache: false
 device: cpu
 workers: 2
 project: runs/bleeding
-name: train3
+name: train
 exist_ok: false
 pretrained: true
 optimizer: auto
@@ -104,4 +104,4 @@ erasing: 0.4
 crop_fraction: 1.0
 cfg: null
 tracker: botsort.yaml
-save_dir: runs/bleeding/train3
+save_dir: runs/bleeding/train

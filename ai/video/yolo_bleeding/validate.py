@@ -16,7 +16,7 @@ def main():
     metrics = model.val(
         data=str(data_yaml),
         imgsz=640,
-        device=0,  # ou "cpu"
+        device=0,
     )
 
     print(metrics)
